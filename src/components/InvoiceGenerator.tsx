@@ -437,7 +437,7 @@ export function InvoiceGenerator({
       pdfDoc.setFontSize(11);
       pdfDoc.setTextColor(255, 255, 255);
       pdfDoc.text(companyAddress, 120, 38, { align: 'center' });
-      pdfDoc.text(`Phone: ${bkashNumber} | Email: roanagown@gmail.com`, 120, 45, { align: 'center' });
+      pdfDoc.text(`Phone: ${bkashNumber} | Email: roanagownglory@gmail.com`, 120, 45, { align: 'center' });
       pdfDoc.text(`Web: www.roanagownglory.com`, 120, 52, { align: 'center' });
 
       // Invoice Info Header
