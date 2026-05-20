@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 # Roana Business Management
 
-A modern business management web application built with React and Vite.
+A modern business management web application, Invoice Generator System built with React and Vite.
 
 ## Features
 
@@ -24,7 +23,6 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/roana-business-management.git
-=======
-# roana-business-management
-Roana Business Management is a modern React + Vite based business management web application designed for fast performance, responsive user experience, and efficient business operations management.
->>>>>>> 9e11502d85878d5f5429518538d1c6556ccc00e4
+
+
+
