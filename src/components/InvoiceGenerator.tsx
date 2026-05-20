@@ -120,6 +120,12 @@ const PRODUCT_CATEGORIES = [
   "Hood",
   "jute Bag",
   "Corporate gift"
+  "Gown+Cap" 
+  "Stole+Cap"
+  "Gown+Hood+Cap"
+  "Gown+Uttoriyo+Cap"
+  "3 Part Set"
+  "4 Part Set"
 ];
 
 export function InvoiceGenerator({ 
