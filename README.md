@@ -17,6 +17,8 @@ A modern business management web application, Invoice Generator System built wit
 - JavaScript
 - CSS / Tailwind (if used)
 
+## Demo
+![](./demo.png)
 ## Installation
 
 Clone the repository:
@@ -24,6 +26,5 @@ Clone the repository:
 ```bash
 git clone https://github.com/YOUR_USERNAME/roana-business-management.git
 
-## Demo
-![](./demo.png)
+
 
