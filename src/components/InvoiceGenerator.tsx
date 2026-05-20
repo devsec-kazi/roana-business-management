@@ -119,7 +119,13 @@ const PRODUCT_CATEGORIES = [
   "Cap",
   "Hood",
   "jute Bag",
-  "Corporate gift"
+  "Corporate gift",
+  "Gown+Cap",
+  "Stole+Cap",
+  "Gown+Hood+Cap",
+  "Gown+Uttoriyo+Cap",
+  "3 Part Set",
+  "4 Part Set"
 ];
 
 export function InvoiceGenerator({ 
@@ -136,7 +142,7 @@ export function InvoiceGenerator({
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [invoiceNo, setInvoiceNo] = useState('Loading...');
   const [items, setItems] = useState<InvoiceItem[]>([
-    { id: '1', product: '', category: PRODUCT_CATEGORIES[0], quantity: 1, costPerProduct: 0, total: 0 }
+    { id: '1', product: '', category: PRODUCT_CATEGORIES[0], quantity: 0, costPerProduct: 0, total: 0 }
   ]);
   const [loading, setLoading] = useState(false);
   const [isGeneratingNo, setIsGeneratingNo] = useState(true);
@@ -283,7 +289,7 @@ export function InvoiceGenerator({
       id: Date.now().toString(), 
       product: '', 
       category: lastCategory, 
-      quantity: 1, 
+      quantity: 0, 
       costPerProduct: 0, 
       total: 0 
     }]);
@@ -407,6 +413,9 @@ export function InvoiceGenerator({
       pdfDoc.setFillColor(255, 255, 255); // White
       pdfDoc.rect(0, 65, 210, 1, 'F');
       
+      const headerTextX = 65;
+      const headerTextWidth = 120;
+
       if (companyLogo) {
         try {
           pdfDoc.addImage(companyLogo, 'PNG', 15, 12, 40, 40);
@@ -429,16 +438,16 @@ export function InvoiceGenerator({
       }
 
       pdfDoc.setFont("helvetica", "bold");
-      pdfDoc.setFontSize(34);
+      pdfDoc.setFontSize(22);
       pdfDoc.setTextColor(255, 255, 255);
-      pdfDoc.text(companyName.toUpperCase(), 120, 28, { align: 'center' });
+      pdfDoc.text("ROANA GOWN & GLORY", headerTextX, 26, { maxWidth: 135, align: 'left' });
       
       pdfDoc.setFont("helvetica", "normal");
-      pdfDoc.setFontSize(11);
+      pdfDoc.setFontSize(10);
       pdfDoc.setTextColor(255, 255, 255);
-      pdfDoc.text(companyAddress, 120, 38, { align: 'center' });
-      pdfDoc.text(`Phone: ${bkashNumber} | Email: roanagownglory@gmail.com`, 120, 45, { align: 'center' });
-      pdfDoc.text(`Web: www.roanagownglory.com`, 120, 52, { align: 'center' });
+      pdfDoc.text(companyAddress, headerTextX, 36, { maxWidth: headerTextWidth });
+      pdfDoc.text(`Phone: ${bkashNumber} | Email: roanagown@gmail.com`, headerTextX, 45, { maxWidth: headerTextWidth });
+      pdfDoc.text(`Web: www.roanagownglory.com`, headerTextX, 52, { maxWidth: headerTextWidth });
 
       // Invoice Info Header
       pdfDoc.setTextColor(0, 0, 0);
@@ -830,7 +839,7 @@ export function InvoiceGenerator({
       if (pdfSuccess) {
         toast.success(`Invoice ${finalInvoiceNo} generated and saved!`);
         // Reset form
-        setItems([{ id: Date.now().toString(), product: '', category: PRODUCT_CATEGORIES[0], quantity: 1, costPerProduct: 0, total: 0 }]);
+        setItems([{ id: Date.now().toString(), product: '', category: PRODUCT_CATEGORIES[0], quantity: 0, costPerProduct: 0, total: 0 }]);
         setSelectedCustomerId('');
         setCustomerSearch('');
         generateNextInvoiceNo();
@@ -873,7 +882,7 @@ export function InvoiceGenerator({
   });
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-border pb-6">
         <div>
           <div className="flex items-center gap-2 text-primary mb-2">
@@ -959,17 +968,17 @@ export function InvoiceGenerator({
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="p-0 flex-1">
+                <CardContent className="p-0 flex-1 overflow-x-auto min-w-0">
                   <div className="overflow-x-auto">
-                    <Table>
+                    <Table className="min-w-[640px] w-full">
                       <TableHeader>
                         <TableRow className="bg-muted hover:bg-muted border-b border-border">
                           <TableHead className="py-4 px-4 text-primary font-bold uppercase tracking-widest text-[9px]">Description</TableHead>
-                          <TableHead className="w-[160px] text-primary font-bold uppercase tracking-widest text-[9px]">Category</TableHead>
-                          <TableHead className="w-[80px] text-primary font-bold uppercase tracking-widest text-[9px] text-center">Qty</TableHead>
-                          <TableHead className="w-[130px] text-primary font-bold uppercase tracking-widest text-[9px]">Price (BDT)</TableHead>
-                          <TableHead className="w-[130px] text-right text-primary font-bold uppercase tracking-widest text-[9px]">Total</TableHead>
-                          <TableHead className="w-[50px] px-4"></TableHead>
+                          <TableHead className="md:w-[160px] text-primary font-bold uppercase tracking-widest text-[9px]">Category</TableHead>
+                          <TableHead className="md:w-[80px] text-primary font-bold uppercase tracking-widest text-[9px] text-center">Qty</TableHead>
+                          <TableHead className="md:w-[130px] text-primary font-bold uppercase tracking-widest text-[9px]">Price (BDT)</TableHead>
+                          <TableHead className="md:w-[130px] text-right text-primary font-bold uppercase tracking-widest text-[9px]">Total</TableHead>
+                          <TableHead className="md:w-[50px] px-4"></TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1001,8 +1010,8 @@ export function InvoiceGenerator({
                             <TableCell className="py-3">
                               <Input 
                                 type="number" 
-                                min="1"
-                                value={item.quantity}
+                                min="0"
+                                value={item.quantity === 0 ? '' : item.quantity}
                                 onChange={e => updateItem(item.id, 'quantity', parseInt(e.target.value) || 0)}
                                 className="h-9 border-border text-center font-bold text-xs rounded-md"
                               />
@@ -1010,7 +1019,8 @@ export function InvoiceGenerator({
                             <TableCell className="py-3">
                               <Input 
                                 type="number" 
-                                value={item.costPerProduct}
+                                min="0"
+                                value={item.costPerProduct === 0 ? '' : item.costPerProduct}
                                 onChange={e => updateItem(item.id, 'costPerProduct', parseFloat(e.target.value) || 0)}
                                 className="h-9 border-border font-bold text-xs rounded-md"
                               />
@@ -1316,7 +1326,7 @@ export function InvoiceGenerator({
                     <History className="h-6 w-6" />
                     <CardTitle className="text-2xl font-sans font-bold">Past Invoices</CardTitle>
                   </div>
-                  <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+                  <div className="flex flex-col md:flex-row items-center gap-4 w-full min-w-0">
                     <div className="relative w-full md:w-72">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/60" />
                       <Input 
@@ -1361,17 +1371,18 @@ export function InvoiceGenerator({
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted">
-                      <TableHead className="py-6 px-6 font-bold text-primary">Invoice No</TableHead>
-                      <TableHead className="font-bold text-primary">Customer</TableHead>
-                      <TableHead className="font-bold text-primary">Date</TableHead>
-                      <TableHead className="font-bold text-primary">Amount</TableHead>
-                      <TableHead className="font-bold text-primary">Items</TableHead>
-                      <TableHead className="text-right px-6 font-bold text-primary">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
+                <div className="overflow-x-auto">
+                  <Table className="min-w-[720px]">
+                    <TableHeader>
+                      <TableRow className="bg-muted">
+                        <TableHead className="py-6 px-6 font-bold text-primary">Invoice No</TableHead>
+                        <TableHead className="font-bold text-primary">Customer</TableHead>
+                        <TableHead className="font-bold text-primary">Date</TableHead>
+                        <TableHead className="font-bold text-primary">Amount</TableHead>
+                        <TableHead className="font-bold text-primary">Items</TableHead>
+                        <TableHead className="text-right px-6 font-bold text-primary">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
                   <TableBody>
                     {filteredInvoices.length > 0 ? (
                       filteredInvoices.map((inv) => (
@@ -1447,6 +1458,7 @@ export function InvoiceGenerator({
                     )}
                   </TableBody>
                 </Table>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
