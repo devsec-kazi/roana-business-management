@@ -396,7 +396,12 @@ export function InvoiceGenerator({
         companyAddress: "Mirpur 12, Dhaka, Bangladesh",
         bkashNumber: "01892799997",
         companyLogo: "",
-        bkashLogo: ""
+        bkashLogo: "",
+        bankName: "Dutch-Bangla Bank",
+        bankAccountName: "Roana Gown & Glory",
+        bankAccountNumber: "2111100616555",
+        bankRoutingNumber: "090263581",
+        bankBranch: "Pallabi Branch, Dhaka"
       };
       
       const companyName = appSettings.companyName;
@@ -404,6 +409,11 @@ export function InvoiceGenerator({
       const bkashNumber = appSettings.bkashNumber;
       const companyLogo = appSettings.companyLogo;
       const bkashLogo = appSettings.bkashLogo;
+      const bankName = appSettings.bankName || 'Dutch-Bangla Bank';
+      const bankAccountName = appSettings.bankAccountName || 'Roana Gown & Glory';
+      const bankAccountNumber = appSettings.bankAccountNumber || '2111100616555';
+      const bankRoutingNumber = appSettings.bankRoutingNumber || '090263581';
+      const bankBranch = appSettings.bankBranch || 'Pallabi Branch, Dhaka';
 
       // Header - Golden Premium Style
       pdfDoc.setFillColor(197, 160, 40); // Rich Gold #C5A028
@@ -668,20 +678,40 @@ export function InvoiceGenerator({
       pdfDoc.setFont("helvetica", "bold");
       pdfDoc.text(bkashNumber, 105, bkashY + 30, { align: 'center' });
 
+      // Bank Transfer Details Section
+      const bankY = bkashY + 60;
+      pdfDoc.setFillColor(248, 250, 252);
+      pdfDoc.roundedRect(15, bankY, 180, 36, 3, 3, 'F');
+      pdfDoc.setDrawColor(226, 232, 240);
+      pdfDoc.roundedRect(15, bankY, 180, 36, 3, 3, 'D');
+
+      pdfDoc.setTextColor(0, 0, 0);
+      pdfDoc.setFontSize(11);
+      pdfDoc.setFont("helvetica", "bold");
+      pdfDoc.text("Bank Transfer Details", 22, bankY + 10);
+
+      pdfDoc.setFontSize(8.5);
+      pdfDoc.setFont("helvetica", "normal");
+      pdfDoc.text(`Bank Name: ${bankName}`, 22, bankY + 18);
+      pdfDoc.text(`A/C Name: ${bankAccountName}`, 22, bankY + 24);
+      pdfDoc.text(`A/C No: ${bankAccountNumber}`, 22, bankY + 30);
+      pdfDoc.text(`Routing: ${bankRoutingNumber}`, 22, bankY + 36);
+      pdfDoc.text(`Branch: ${bankBranch}`, 22, bankY + 42);
+
       // Footer divider - Sharp line
       pdfDoc.setDrawColor(230, 230, 230);
       pdfDoc.setLineWidth(0.4);
-      pdfDoc.line(15, bkashY + 50, 195, bkashY + 50);
+      pdfDoc.line(15, bankY + 46, 195, bankY + 46);
       
       // Footer text - Matched to Image
       pdfDoc.setTextColor(100, 100, 100);
       pdfDoc.setFontSize(12);
       pdfDoc.setFont("times", "italic");
-      pdfDoc.text(paymentNote || "Thank you!", 15, bkashY + 58);
+      pdfDoc.text(paymentNote || "Thank you!", 15, bankY + 54);
       
       pdfDoc.setFontSize(9);
       pdfDoc.setFont("courier", "normal");
-      pdfDoc.text("www.roanagownglory.com", 195, bkashY + 58, { align: 'right' });
+      pdfDoc.text("www.roanagownglory.com", 195, bankY + 54, { align: 'right' });
 
       // Footer
       pdfDoc.setTextColor(150, 150, 150);
@@ -1136,7 +1166,7 @@ export function InvoiceGenerator({
                           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter mb-1">Mobile Number</p>
                           <p className="text-lg font-sans font-bold text-primary">{selectedCustomer.mobile || 'N/A'}</p>
                         </div>
- 
+  
                         <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
                           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter mb-1">Billing Address</p>
                           <p className="text-sm text-primary leading-relaxed">{selectedCustomer.address || 'No address provided'}</p>
@@ -1303,7 +1333,7 @@ export function InvoiceGenerator({
                           )}
                         </div>
                         {!loading && (
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                         )}
                       </Button>
                     </div>
