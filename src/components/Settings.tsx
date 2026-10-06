@@ -15,7 +15,8 @@ import {
   Hash, 
   Folder,
   Loader2,
-  ShieldCheck
+  ShieldCheck,
+  Landmark
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -29,6 +30,11 @@ export interface AppSettings {
   vipFolderPrefix: string;
   companyLogo?: string;
   bkashLogo?: string;
+  bankName?: string;
+  bankAccountName?: string;
+  bankAccountNumber?: string;
+  bankRoutingNumber?: string;
+  bankBranch?: string;
 }
 
 export function Settings() {
@@ -41,7 +47,12 @@ export function Settings() {
     invoicePrefix: 'ROGG',
     vipFolderPrefix: 'A',
     companyLogo: '',
-    bkashLogo: ''
+    bkashLogo: '',
+    bankName: 'Dutch-Bangla Bank',
+    bankAccountName: 'Roana Gown & Glory',
+    bankAccountNumber: '2111100616555',
+    bankRoutingNumber: '090263581',
+    bankBranch: 'Pallabi Branch, Dhaka'
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -229,6 +240,62 @@ export function Settings() {
                     onChange={e => setSettings({...settings, paymentNote: e.target.value})}
                     className="h-12 border-border"
                     placeholder="e.g. Thank you!"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border border-border shadow-xl bg-card">
+              <CardHeader className="border-b border-border">
+                <div className="flex items-center gap-2 text-primary">
+                  <Landmark className="h-5 w-5" />
+                  <CardTitle className="text-lg font-sans font-bold">Bank Information</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Bank Name</Label>
+                  <Input 
+                    value={settings.bankName}
+                    onChange={e => setSettings({...settings, bankName: e.target.value})}
+                    className="h-12 border-border"
+                    placeholder="e.g. Dutch-Bangla Bank"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Account Name</Label>
+                  <Input 
+                    value={settings.bankAccountName}
+                    onChange={e => setSettings({...settings, bankAccountName: e.target.value})}
+                    className="h-12 border-border"
+                    placeholder="e.g. Roana Gown & Glory"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Account Number</Label>
+                  <Input 
+                    value={settings.bankAccountNumber}
+                    onChange={e => setSettings({...settings, bankAccountNumber: e.target.value})}
+                    className="h-12 border-border"
+                    placeholder="e.g. 1234567890"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Routing Number</Label>
+                  <Input 
+                    value={settings.bankRoutingNumber}
+                    onChange={e => setSettings({...settings, bankRoutingNumber: e.target.value})}
+                    className="h-12 border-border"
+                    placeholder="e.g. 090263581"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Branch</Label>
+                  <Input 
+                    value={settings.bankBranch}
+                    onChange={e => setSettings({...settings, bankBranch: e.target.value})}
+                    className="h-12 border-border"
+                    placeholder="e.g. Pallabi Branch, Dhaka"
                   />
                 </div>
               </CardContent>
