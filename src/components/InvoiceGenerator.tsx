@@ -125,7 +125,8 @@ const PRODUCT_CATEGORIES = [
   "Gown+Hood+Cap",
   "Gown+Uttoriyo+Cap",
   "3 Part Set",
-  "4 Part Set"
+  "4 Part Set",
+  "Others"
 ];
 
 export function InvoiceGenerator({ 
@@ -304,7 +305,6 @@ export function InvoiceGenerator({
     setItems(items.map(item => {
       if (item.id === id) {
         const updatedItem = { ...item, [field]: value };
-        // Auto-calculate total as user types
         const qty = field === 'quantity' ? Number(value) : Number(item.quantity);
         const price = field === 'costPerProduct' ? Number(value) : Number(item.costPerProduct);
         updatedItem.total = qty * price;
@@ -388,7 +388,6 @@ export function InvoiceGenerator({
     try {
       const pdfDoc = new jsPDF();
       
-      // Fetch dynamic settings
       const settingsRef = doc(db, 'settings', 'app');
       const settingsSnap = await getDoc(settingsRef);
       const appSettings = settingsSnap.exists() ? settingsSnap.data() : {
@@ -415,14 +414,10 @@ export function InvoiceGenerator({
       const bankRoutingNumber = appSettings.bankRoutingNumber || '090263581';
       const bankBranch = appSettings.bankBranch || 'Pallabi Branch, Dhaka';
 
-      // Header - Golden Premium Style
-      pdfDoc.setFillColor(197, 160, 40); // Rich Gold #C5A028
+      pdfDoc.setFillColor(197, 160, 40);
       pdfDoc.rect(0, 0, 210, 65, 'F');
-      
-      // Decorative Border
-      pdfDoc.setFillColor(255, 255, 255); // White
+      pdfDoc.setFillColor(255, 255, 255);
       pdfDoc.rect(0, 65, 210, 1, 'F');
-      
       const headerTextX = 65;
       const headerTextWidth = 120;
 
@@ -459,7 +454,6 @@ export function InvoiceGenerator({
       pdfDoc.text(`Phone: ${bkashNumber} | Email: roanagown@gmail.com`, headerTextX, 45, { maxWidth: headerTextWidth });
       pdfDoc.text(`Web: www.roanagownglory.com`, headerTextX, 52, { maxWidth: headerTextWidth });
 
-      // Invoice Info Header
       pdfDoc.setTextColor(0, 0, 0);
       pdfDoc.setFontSize(32);
       pdfDoc.setFont("helvetica", "bold");
@@ -477,16 +471,12 @@ export function InvoiceGenerator({
       pdfDoc.text(format(currentDate, 'PPP').toUpperCase(), 45, 108);
       
       if (currentCustomer?.type === 'VIP') {
-        // VIP Badge with Icon
         pdfDoc.setFillColor(0, 0, 0);
         pdfDoc.rect(15, 114, 45, 10, 'F');
-        
-        // Add a small star icon (drawn with lines)
         const starX = 20;
         const starY = 119;
         pdfDoc.setDrawColor(255, 255, 255);
         pdfDoc.setLineWidth(0.5);
-        // Simple star shape
         pdfDoc.line(starX, starY - 2, starX + 1, starY + 2);
         pdfDoc.line(starX + 1, starY + 2, starX - 2, starY - 0.5);
         pdfDoc.line(starX - 2, starY - 0.5, starX + 2, starY - 0.5);
@@ -502,9 +492,8 @@ export function InvoiceGenerator({
 
       const payStatus = invoiceData?.paymentStatus ?? 'Due';
 
-      // Centered Stamp/Mark for Paid or Due status
       if (payStatus === 'Paid') {
-        pdfDoc.setDrawColor(34, 197, 94); // Green
+        pdfDoc.setDrawColor(34, 197, 94);
         pdfDoc.setLineWidth(1.2);
         pdfDoc.roundedRect(87, 69, 36, 12, 1.5, 1.5, 'D');
         pdfDoc.setLineWidth(0.4);
@@ -516,7 +505,7 @@ export function InvoiceGenerator({
         pdfDoc.text("PAID", 105, 77.5, { align: 'center' });
         pdfDoc.setTextColor(0, 0, 0);
       } else {
-        pdfDoc.setDrawColor(220, 38, 38); // Red
+        pdfDoc.setDrawColor(220, 38, 38);
         pdfDoc.setLineWidth(1.2);
         pdfDoc.roundedRect(87, 69, 36, 12, 1.5, 1.5, 'D');
         pdfDoc.setLineWidth(0.4);
@@ -529,7 +518,6 @@ export function InvoiceGenerator({
         pdfDoc.setTextColor(0, 0, 0);
       }
 
-      // Customer Info Box - Modern Style
       pdfDoc.setFillColor(248, 250, 252);
       pdfDoc.rect(120, 80, 75, 50, 'F');
       pdfDoc.setDrawColor(226, 232, 240);
@@ -551,7 +539,6 @@ export function InvoiceGenerator({
       pdfDoc.text(`Mobile: ${currentCustomer?.mobile || "N/A"}`, 127, 114);
       pdfDoc.text(currentCustomer?.address || "N/A", 127, 120, { maxWidth: 60 });
 
-      // Table
       const tableData = currentItems.map(item => [
         item.product,
         item.category,
@@ -566,7 +553,7 @@ export function InvoiceGenerator({
         body: tableData,
         theme: 'grid',
         headStyles: { 
-          fillColor: [197, 160, 40], // Rich Gold
+          fillColor: [197, 160, 40],
           textColor: [255, 255, 255],
           fontSize: 9,
           fontStyle: 'bold',
@@ -589,7 +576,6 @@ export function InvoiceGenerator({
         },
         margin: { left: 15, right: 15 },
         didDrawPage: (data) => {
-          // Add custom footer on each page
           pdfDoc.setFontSize(8);
           pdfDoc.setTextColor(150, 150, 150);
           pdfDoc.text("Roana Gown & Glory - Professional Sales Memo", 105, 285, { align: 'center' });
@@ -597,14 +583,11 @@ export function InvoiceGenerator({
       });
 
       let finalY = (pdfDoc as any).lastAutoTable.finalY + 15;
-      
-      // Page break check for summary section
       if (finalY > 210) {
         pdfDoc.addPage();
-        finalY = 30; // Reset to top of new page
+        finalY = 30;
       }
 
-      // Summary Section
       const summaryX = 130;
       
       pdfDoc.setFont("helvetica", "bold");
@@ -644,84 +627,57 @@ export function InvoiceGenerator({
       pdfDoc.text(payStatus === 'Paid' ? "TOTAL PAID:" : "DUE AMOUNT:", summaryX, finalY + 18);
       
       if (payStatus === 'Paid') {
-        pdfDoc.setTextColor(34, 197, 94); // Green
+        pdfDoc.setTextColor(34, 197, 94);
       } else {
-        pdfDoc.setTextColor(220, 38, 38); // Red
+        pdfDoc.setTextColor(220, 38, 38);
       }
       pdfDoc.text(`${(payStatus === 'Paid' ? currentTotal : dueAmt).toLocaleString()} BDT`, 195, finalY + 18, { align: 'right' });
 
-      // bKash Branding Section
-      const bkashY = finalY + 35;
-      
-      // Top Row: Text & Logo
-      pdfDoc.setFont("helvetica", "bold");
-      pdfDoc.setFontSize(18);
-      pdfDoc.setTextColor(0, 0, 0);
-      pdfDoc.text("Make bKash Payment", 15, bkashY - 5);
-      
-      const logoRightX = 195;
-      pdfDoc.setFillColor(226, 19, 110);
-      pdfDoc.circle(logoRightX - 4, bkashY - 10, 4, 'F');
-      pdfDoc.setTextColor(255, 255, 255);
-      pdfDoc.setFontSize(8);
-      pdfDoc.text("b", logoRightX - 4, bkashY - 8.5, { align: 'center' });
+      const paymentInfoY = finalY + 30;
+      const leftBoxX = 15;
+      const rightBoxX = 105;
+      const infoBoxWidth = 90;
+      const infoBoxHeight = 36;
 
-      pdfDoc.setFillColor(226, 19, 110);
-      pdfDoc.roundedRect(15, bkashY, 180, 40, 3, 3, 'F');
-      
-      pdfDoc.setTextColor(255, 255, 255);
-      pdfDoc.setFontSize(12);
-      pdfDoc.setFont("helvetica", "normal");
-      pdfDoc.text("bKash Merchant Number", 105, bkashY + 12, { align: 'center' });
-      
-      pdfDoc.setFontSize(32);
-      pdfDoc.setFont("helvetica", "bold");
-      pdfDoc.text(bkashNumber, 105, bkashY + 30, { align: 'center' });
-
-      // Bank Transfer Details Section
-      const bankY = bkashY + 60;
-      pdfDoc.setFillColor(248, 250, 252);
-      pdfDoc.roundedRect(15, bankY, 180, 36, 3, 3, 'F');
-      pdfDoc.setDrawColor(226, 232, 240);
-      pdfDoc.roundedRect(15, bankY, 180, 36, 3, 3, 'D');
-
-      pdfDoc.setTextColor(0, 0, 0);
-      pdfDoc.setFontSize(11);
-      pdfDoc.setFont("helvetica", "bold");
-      pdfDoc.text("Bank Transfer Details", 22, bankY + 10);
-
-      pdfDoc.setFontSize(8.5);
-      pdfDoc.setFont("helvetica", "normal");
-      pdfDoc.text(`Bank Name: ${bankName}`, 22, bankY + 18);
-      pdfDoc.text(`A/C Name: ${bankAccountName}`, 22, bankY + 24);
-      pdfDoc.text(`A/C No: ${bankAccountNumber}`, 22, bankY + 30);
-      pdfDoc.text(`Routing: ${bankRoutingNumber}`, 22, bankY + 36);
-      pdfDoc.text(`Branch: ${bankBranch}`, 22, bankY + 42);
-
-      // Footer divider - Sharp line
-      pdfDoc.setDrawColor(230, 230, 230);
+      pdfDoc.setFillColor(255, 255, 255);
+      pdfDoc.setDrawColor(220, 220, 220);
       pdfDoc.setLineWidth(0.4);
-      pdfDoc.line(15, bankY + 46, 195, bankY + 46);
-      
-      // Footer text - Matched to Image
+      pdfDoc.roundedRect(leftBoxX, paymentInfoY, infoBoxWidth, infoBoxHeight, 2, 2, 'FD');
+      pdfDoc.roundedRect(rightBoxX, paymentInfoY, infoBoxWidth, infoBoxHeight, 2, 2, 'FD');
+
+      pdfDoc.setTextColor(0, 0, 0);
+      pdfDoc.setFont("helvetica", "bold");
+      pdfDoc.setFontSize(10);
+      pdfDoc.text("bKash Payment Information", leftBoxX + 5, paymentInfoY + 8);
+      pdfDoc.text("Bank Transfer Information", rightBoxX + 5, paymentInfoY + 8);
+
+      pdfDoc.setFontSize(8.2);
+      pdfDoc.setFont("helvetica", "normal");
+      pdfDoc.setTextColor(64, 64, 64);
+      pdfDoc.text("Merchant Number:", leftBoxX + 5, paymentInfoY + 16);
+      pdfDoc.text(`A/C Name: ${bankAccountName}`, rightBoxX + 5, paymentInfoY + 16);
+      pdfDoc.text(`A/C No: ${bankAccountNumber}`, rightBoxX + 5, paymentInfoY + 22);
+      pdfDoc.text(`Bank: ${bankName}`, rightBoxX + 5, paymentInfoY + 28);
+      pdfDoc.text(`Branch: ${bankBranch}`, rightBoxX + 5, paymentInfoY + 34);
+
+      pdfDoc.setTextColor(226, 19, 110);
+      pdfDoc.setFont("helvetica", "bold");
+      pdfDoc.setFontSize(9.5);
+      pdfDoc.text(bkashNumber, leftBoxX + 5, paymentInfoY + 24);
+
       pdfDoc.setTextColor(100, 100, 100);
       pdfDoc.setFontSize(12);
       pdfDoc.setFont("times", "italic");
-      pdfDoc.text(paymentNote || "Thank you!", 15, bankY + 54);
-      
+      pdfDoc.text(paymentNote || "Thank you!", 15, paymentInfoY + 50);
       pdfDoc.setFontSize(9);
       pdfDoc.setFont("courier", "normal");
-      pdfDoc.text("www.roanagownglory.com", 195, bankY + 54, { align: 'right' });
+      pdfDoc.text("www.roanagownglory.com", 195, paymentInfoY + 50, { align: 'right' });
 
-      // Footer
       pdfDoc.setTextColor(150, 150, 150);
       pdfDoc.setFontSize(8);
       pdfDoc.text("Professionally generated by Roana Gown & Glory Management System", 105, 290, { align: 'center' });
 
-      // Save PDF
       const fileName = `${currentInvoiceNo}_${currentCustomer?.name || 'Invoice'}.pdf`;
-      
-      // Use a robust download method for both standard and restricted environments (iframes)
       try {
         const blob = pdfDoc.output('blob');
         const url = URL.createObjectURL(blob);
@@ -731,8 +687,6 @@ export function InvoiceGenerator({
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
-        // Revoke the URL after a short delay to ensure the browser has started the download
         setTimeout(() => URL.revokeObjectURL(url), 100);
       } catch (e) {
         console.warn("Download failed, trying fallback:", e);
@@ -748,7 +702,6 @@ export function InvoiceGenerator({
   };
 
   const saveInvoice = async () => {
-    // 1. Validation
     if (!selectedCustomer) {
       toast.error("Please select a customer before saving.");
       const searchInput = document.querySelector('input[placeholder="Type Name or ID..."]') as HTMLInputElement;
@@ -776,7 +729,6 @@ export function InvoiceGenerator({
       ? advancePercentage
       : (totalAmount > 0 ? Math.round((manualAdvanceAmount / totalAmount) * 100) : 0);
 
-    // Create a backup of the data in case Firestore fails
     const invoiceBackup = {
       customerId: selectedCustomer.customerId,
       customerName: selectedCustomer.name,
@@ -790,7 +742,6 @@ export function InvoiceGenerator({
     };
 
     try {
-      // 2. Fetch App Settings for Prefix
       let prefix = 'ROGG';
       let vipPrefix = '';
       try {
@@ -815,7 +766,6 @@ export function InvoiceGenerator({
         ? doc(db, 'vip_counters', folderName)
         : doc(db, 'counters', 'invoices');
 
-      // 3. Database Transaction
       await runTransaction(db, async (transaction) => {
         const counterSnap = await transaction.get(counterRef);
         let nextNo = 1;
@@ -847,9 +797,6 @@ export function InvoiceGenerator({
         transaction.set(counterRef, { lastNo: nextNo });
       });
       
-      console.log(`Invoice ${finalInvoiceNo} saved successfully to Firestore.`);
-      
-      // 4. PDF Generation
       const pdfSuccess = await generatePDF({
         id: 'temp',
         invoiceNo: finalInvoiceNo,
@@ -868,19 +815,14 @@ export function InvoiceGenerator({
 
       if (pdfSuccess) {
         toast.success(`Invoice ${finalInvoiceNo} generated and saved!`);
-        // Reset form
         setItems([{ id: Date.now().toString(), product: '', category: PRODUCT_CATEGORIES[0], quantity: 0, costPerProduct: 0, total: 0 }]);
         setSelectedCustomerId('');
         setCustomerSearch('');
         generateNextInvoiceNo();
-        
-        // Remove locally cached backup if exists
         localStorage.removeItem('last_invoice_draft');
       }
     } catch (error: any) {
       console.error("Critical error in saveInvoice:", error);
-      
-      // Local Fallback Storage
       try {
         localStorage.setItem('last_invoice_draft', JSON.stringify(invoiceBackup));
         toast.error("Database connection failed. Invoice saved locally in this browser.");
@@ -888,7 +830,6 @@ export function InvoiceGenerator({
         toast.error("Critical failure: Could not save to database or local storage.");
       }
 
-      // More descriptive error messages based on Firebase error codes
       if (error.code === 'permission-denied') {
         toast.error("Security access denied. Please contact the administrator.");
       } else if (error.code === 'unavailable') {
@@ -947,7 +888,6 @@ export function InvoiceGenerator({
             exit={{ opacity: 0, y: -20 }}
             className="grid grid-cols-12 gap-8"
           >
-            {/* bKash Payment Banner - Identical to Uploaded Design */}
             <div className="col-span-12">
               <div className="bg-white rounded-3xl p-8 md:p-10 shadow-xl border border-border space-y-6 relative overflow-hidden group">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -974,7 +914,6 @@ export function InvoiceGenerator({
               </div>
             </div>
 
-            {/* Left Side: Items Selection */}
             <div className="col-span-12 lg:col-span-8 space-y-6">
               <Card className="border border-border shadow-xl bg-card overflow-hidden h-full flex flex-col rounded-3xl">
                 <CardHeader className="bg-primary text-primary-foreground p-8">
@@ -1077,7 +1016,6 @@ export function InvoiceGenerator({
               </Card>
             </div>
 
-            {/* Right Side: Customer & Summary */}
             <div className="col-span-12 lg:col-span-4 space-y-8">
               <Card className="border border-border shadow-2xl bg-card overflow-hidden flex flex-col h-full">
                 <CardHeader className="border-b border-border p-8">
@@ -1205,7 +1143,6 @@ export function InvoiceGenerator({
                               </div>
                             </div>
 
-                            {/* Manual Advance Toggle Control */}
                             <div className="flex bg-stone-200/80 p-0.5 rounded-lg border border-stone-300 shadow-sm shrink-0">
                               <button
                                 type="button"
@@ -1495,7 +1432,6 @@ export function InvoiceGenerator({
         )}
       </AnimatePresence>
 
-      {/* Delete Confirmation Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent className="sm:max-w-[400px] border-none shadow-2xl p-0 overflow-hidden">
           <div className="bg-destructive p-8 text-white">
